@@ -21,28 +21,27 @@ function staticLoadPlaces() {
 var models = [
     {
         url: './assets/magnemite/scene.gltf',
-        scale: '0.5 0.5 0.5',
+        scale: '0.1 0.1 0.1',
         info: 'Magnemite, Lv. 5, HP 10/10',
         rotation: '0 180 0',
     },
     {
         url: './assets/articuno/scene.gltf',
-        scale: '0.2 0.2 0.2',
+        scale: '0.06 0.06 0.06',
         rotation: '0 180 0',
         info: 'Articuno, Lv. 80, HP 100/100',
     },
-    {
-        url: './assets/dragonite/scene.gltf',
-        scale: '0.08 0.08 0.08',
-        rotation: '0 180 0',
-        info: 'Dragonite, Lv. 99, HP 150/150',
-    },
+    
 ];
 
 var modelIndex = 0;
 var setModel = function (model, entity) {
     if (model.scale) {
-        entity.setAttribute('scale', model.scale);
+        const scaleFactor = 0.33; // Adjust as needed
+        const scaledScale = model.scale.split(' ').map(value => value * scaleFactor).join(' ');
+        entity.setAttribute('scale', scaledScale);
+
+       
     }
 
     if (model.rotation) {
@@ -54,6 +53,7 @@ var setModel = function (model, entity) {
     }
 
     entity.setAttribute('gltf-model', model.url);
+    
 
     const div = document.querySelector('.instructions');
     div.innerText = model.info;
