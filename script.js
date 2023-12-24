@@ -1,85 +1,52 @@
-window.onload = () => {
-    const button = document.querySelector('button[data-action="change"]');
-    button.innerText = '﹖';
 
-    let places = staticLoadPlaces();
-    renderPlaces(places);
-};
 
-function staticLoadPlaces() {
-    return [
-        {
-            name: 'Pokèmon',
-            location: {
-                lat: 10.138427,
-                lng:  76.567121,
-            },
-        },
-    ];
-}
+const body = document.getElementsByTagName('body')[0];
+console.log(body)
 
-var models = [
-    {
-        url: './assets/magnemite/scene.gltf',
-        scale: '0.1 0.1 0.1',
-        info: 'Magnemite, Lv. 5, HP 10/10',
-        rotation: '0 180 0',
-    },
-    {
-        url: './assets/articuno/scene.gltf',
-        scale: '0.1 0.1 0.1',
-        rotation: '0 180 0',
-        info: 'Articuno, Lv. 80, HP 100/100',
-    },
-    
-];
+const leftButton = document.createElement('button');
+leftButton.innerHTML = "left";
 
-var modelIndex = 0;
-var setModel = function (model, entity) {
-    if (model.scale) {
-        const scaleFactor = 0.33; // Adjust as needed
-        const scaledScale = model.scale.split(' ').map(value => value * scaleFactor).join(' ');
-        entity.setAttribute('scale', scaledScale);
+const rightButton = document.createElement('button');
+rightButton.innerHTML = "right";
 
-       
-    }
+const parentDiv = document.createElement('div');
+parentDiv.appendChild(leftButton);
+parentDiv.appendChild(rightButton);
 
-    if (model.rotation) {
-        entity.setAttribute('rotation', model.rotation);
-    }
+parentDiv.style.position = "absolute";
+parentDiv.style.bottom = "10px";
+parentDiv.style.right = "20px";
+parentDiv.style.backgroundColor = "red";
+parentDiv.style.height = "100px";
+parentDiv.style.width = "100px";
 
-    if (model.position) {
-        entity.setAttribute('position', model.position);
-    }
 
-    entity.setAttribute('gltf-model', model.url);
+leftButton.addEventListener("click",()=>{
+    const dModel = document.getElementById("model")
+    const aEntity = document.getElementsByTagName("a-entity")[0]
+    const model = document.createElement('a-gltf-model');
+    model.id = "model";
+    model.setAttribute('rotation', '0 0 0');
+    model.setAttribute('position', '0.8 0.0 0');
+    model.setAttribute('scale', '0.5 0.5 0.5');
+    model.setAttribute('src', "./assets/stylized_coin/scene.gltf");
+    model.setAttribute('animation', 'property: rotation; to: 0 360 0.1; dur: 3000; easing: easeInOutQuad; loop: true; dir: alternate');
     
 
-    const div = document.querySelector('.instructions');
-    div.innerText = model.info;
-};
+    aEntity.appendChild(model); // Append without overwriting
+    let pos = dModel.getAttribute("position")
+    console.log(pos,pos.x)
 
-function renderPlaces(places) {
-    let scene = document.querySelector('a-scene');
+    dModel.setAttribute('position', `${pos.x-0.1} 0 0`);
+})
 
-    places.forEach((place) => {
-        let latitude = place.location.lat;
-        let longitude = place.location.lng;
 
-        let model = document.createElement('a-entity');
-        model.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+rightButton.addEventListener("click",()=>{
+    const dModel = document.getElementById("model")
+    let pos = dModel.getAttribute("position")
+    console.log(pos,pos.x)
 
-        setModel(models[modelIndex], model);
+    dModel.setAttribute('position', `${pos.x+0.1} 0 0`);
+})
 
-        model.setAttribute('animation-mixer', '');
-
-        document.querySelector('button[data-action="change"]').addEventListener('click', function () {
-            var entity = document.querySelector('[gps-entity-place]');
-            modelIndex++;
-            var newIndex = modelIndex % models.length;
-            setModel(models[newIndex], entity);
-        });
-
-        scene.appendChild(model);
-    });
-}
+body.appendChild(parentDiv);
